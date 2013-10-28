@@ -11,17 +11,7 @@ module Sidekiq
           def no_translation t
             t
           end
-        end
-        
-        web_dir = File.expand_path("../../../web", __FILE__)
-        js_dir = File.join(web_dir, "assets", "javascripts")
-        
-        app.register Sinatra::AssetPack
-        
-        app.assets {
-          serve '/js', from: js_dir
-          js 'jsoneditor', ['/js/jsoneditor.js']
-        }
+        end    
         
         #index page of cron jobs
         app.get '/cron' do   
