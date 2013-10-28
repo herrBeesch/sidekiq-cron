@@ -1,4 +1,3 @@
-require 'sinatra/assetpack'
 module Sidekiq
   module Cron
     module WebExtension
