@@ -1,3 +1,4 @@
+require 'sinatra/assetpack'
 module Sidekiq
   module Cron
     module WebExtension
@@ -12,7 +13,17 @@ module Sidekiq
             t
           end
         end
-
+        
+        web_dir = File.expand_path("../../../web", __FILE__)
+        js_dir = File.join(web_dir, "assets", "javascripts")
+        
+        app.register Sinatra::AssetPack
+        
+        app.assets {
+          serve '/js', from: js_dir
+          js 'jsoneditor', ['/js/jsoneditor.js']
+        }
+        
         #index page of cron jobs
         app.get '/cron' do   
           view_path    = File.join(File.expand_path("..", __FILE__), "views")
