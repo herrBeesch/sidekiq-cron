@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 
 gem "sidekiq", ">= 2.13.1"
 gem 'rufus-scheduler', '>= 2.0.24'
-gem 'sinatra-assetpack', '>= 0.2.5'
 
 group :development do
   gem "bundler"
