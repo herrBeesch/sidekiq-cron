@@ -2,6 +2,7 @@ en:
   Job: Job
   Cron: Cron
   CronJobs: Cron Jobs
+  Edit: Edit Cron Job
   EnqueueNow: Enqueue Now
   AreYouSureDeleteCronJob: Are you sure you want to delete the %{job} cron job?
   NoCronJobsFound: "No cron jobs found"
