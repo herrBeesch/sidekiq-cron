@@ -59,6 +59,14 @@ module Sidekiq
           redirect "#{root_path}cron"
         end
         
+        #edit job
+        app.get '/cron/:name/edit' do |name|
+          if @job = Sidekiq::Cron::Job.find(name)
+            render(:erb, File.read(File.join(view_path, "cron_edit.erb")))
+          end
+          redirect "#{root_path}cron"
+        end
+        
       end
     end
   end
