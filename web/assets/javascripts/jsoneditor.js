@@ -124,7 +124,7 @@
         var appender = $('<div>', { 'class': 'item appender' }),
             btn      = $('<button></button>', { 'class': 'property' });
 
-        btn.text('Add New Value');
+        btn.text('new');
 
         appender.append(btn);
         item.append(appender);
