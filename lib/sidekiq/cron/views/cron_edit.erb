@@ -5,7 +5,17 @@
   </div>
 </header>
 <div>
-  <div id="editor" class="json-editor">
+  <div id="editor" class="json-editor panel" style="box-shadow: 0 0 5px rgba(50, 50, 50, 0.25);">
+    <div id="legend">
+          <span id="expendAll" class="btn btn-xs">alle ausfahren</span>
+          <span class="btn-xs legObj">{} Object</span>
+          <span class=" btn-xs legStr">"" String</span>
+          <span class=" btn-xs legNum"># Number</span>
+          <span class=" btn-xs legArr">[] Array</span>
+          <span class=" btn-xs legBoo">IO Boolean</span>
+          <span class=" btn-xs legNll">Null</span>
+    </div>
+    <hr/>
     <style type="text/css" scoped="scoped">
     .json-editor { 
       margin-left: 10px;
@@ -22,20 +32,22 @@
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
       border-radius: 5px;
-      padding: 3px;
+      padding: 5px;
       margin-right: 2px;
     }
 
     .json-editor .value { 
-      background-color: #ECF3C3;
-      width: 600px;
+      background: rgba(237, 237, 237, .7);
+      width: 80%;
+    }
+    .btn-exp{
+      margin-left: -15px;
     }
     .json-editor .property { 
       width: 154px;
-      background-color: #B1C639;
+      background-color:#EAEAEA;
       color: white;
-      font-weight: bold;
-      text-shadow: 1px 1px 1px black;
+
     }
     .json-editor button.property { 
       width: 160px;
@@ -64,28 +76,42 @@
     }
 
     .json-editor .expander { 
-      background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJCxMmIIjsHfkAAAHTSURBVDjLzZPLaxNRFMZ/ZzKTNs10xHUyYFsfsZC2IOii2ftHCKKx/0G1brQlFhShCzfuXXUjuHErKGiVpr6qYK0bGyMoyCRVq5Mwkzku8ja6c+GFA5f7ne87zwv/zXn2bgcAVRVVNf5i0usLIO3Lq/cfze2trdfra48yHbCFqnYDnZjNbafcdPbtxpMgn893BXYqPxZO5o5fNwwDAUSkL0NVRYEoarB65+6tY5mJswBGN5okfP9nhyxA2nVJp9N9b/Vana/VaidLszeKIIgIhghhGDI/fx7H2ceZ06ewrDhRt2YdEBBpg0rKdRm1bZxRm+TIMNnsFN/39iiXyyDd3vSd8q6/dGB8XI8cndR7Dx5qpKqNqGmqqsUXm3o4k9GxiYN6f/3p44EMFAUFyzRZLiyxMjzEpcuL2LbNxYUL+LU6cStOEAQ9BfQKNPkoUPE8wjDEr9UxrSFKpRKWFW/ytH+s5sCoVImAWCzG8pVC08myiFpYk6vyhwz0m+04aKPRchE8z/ttD5SRZJJEIlEZ2MSV26sc2p/afL5RnOrZjQ653afp6Zmg+ulDbu7cXLFPYO3lG2ZnJrlWWByLxUyr09jWfrRnvfvlc/nqjZv+P/uEvwD/VNrBXhv7BAAAAABJRU5ErkJggg==") no-repeat center center;
       width: 16px;
-      height: 11px;
       display: inline-block;
       margin-left: -15px;
       cursor: pointer;
     }
     .json-editor .item.expanded > .expander { 
-      background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sKBBAdNcQGwvUAAAGjSURBVDjLzZNNS1tREIafOfdGjcaA65hFKQUpWIWCLgwI3fQnFMGN0Z/QiqsWKVgKLrpx78pNoZv+BUU0WNRC/dgoTaFCMWnUNoZ7b6aLm5ycS+quix44cJiPd953Zg78N2fv9BwAVRVVNXdccWMBpP04PPvmnxwdfd7Z2hyxzpZXtVNocqpwkssPjx6XtoNisdgBOK/8WnxamHhrjEEAEUkwVFUUaDYjNj58XH88cn8OwHSqSbpe/22T3XTX1rhtUKtWLUtDIlAQEYwIURRZexgGGBEX2IryXb3S8uXyeQYzGYc/XN/cUC6XQTq9SQIQI4RhxPMXSzyZLtjmGYHS/iGzM89iQX8DUBQUUr7P6+VXrPb1MpjNAnBVq1G/bdCT6iEIAkeACxDno0Dl8pIwDDGeZwONSJynybH6XaNSpQl4nmcLiUCz5YttKl1TUNWrTDabAEmwU0VR+gcGSKfTla5NXH2/wYOh3MGn0u4jZzcss3afxsbGg+r3r4WF+YXdBMDW/hemxh/yZvnlPc/zU7ax7Qm1tPz8cVFeebdW/2ef8A+6rb2Fr7Cr4wAAAABJRU5ErkJggg==") no-repeat center center;
     }
 
     .json-editor .item.appender > .property { 
        background-color: #999999; 
        cursor: pointer;
-       width: 100px;
-    }
-    .json-editor .item.string > .property { background-color: #009408; }
-    .json-editor .item.array  > .property { background-color: #2D5B89; }
-    .json-editor .item.object > .property { background-color: #E17000; }
-    .json-editor .item.number > .property { background-color: #497B8D; }
-    /*.json-editor .item.boolean { background-color:  }*/
-    /*.json-editor .item.null { background-color:  }*/
+       width: 50px;
+    }   
+    
+    .json-editor .item.string_sym > .property {padding-right:26px ;color:#fff; background-color:#90908F; background-image: url('/sidekiq/images/string.png'); background-position: right, bottom; background-repeat:no-repeat;}
+    .json-editor .item.array_sym  > .property {padding-right:26px; color:#fff; background-color:rgba(100,116,165,1); background-image: url('/sidekiq/images/array.png'); background-position: right, bottom; background-repeat:no-repeat;}
+    .json-editor .item.object_sym > .property {padding-right:26px; color:#fff; background-color:rgba(152,0,61,1); background-image: url('/sidekiq/images/object.png'); background-position: right, bottom; background-repeat:no-repeat;}
+    .json-editor .item.number_sym > .property {padding-right:26px; color:#fff; background-color:#AFA528; background-image: url('/sidekiq/images/number.png'); background-position: right, bottom; background-repeat:no-repeat;}
+    .json-editor .item.boolean_sym > .property {padding-right:26px; color:#fff; background-color:#1A8E57; background-image: url('/sidekiq/images/boolean.png'); background-position: right, bottom; background-repeat:no-repeat;}
+    .json-editor .item.null_sym > .property { background-color:#fff!important;color:#fff;}
+  
+    
+/*    .legStr { background-color:#90908F!important;color:#fff;}
+    .legArr { background-color:#1A708E!important;color:#fff;}
+    .legObj { background-color:#8E2C1A!important;color:#fff;}
+    .legNum { background-color:#AFA528!important;color:#fff;}
+    .legBoo { background-color:#1A8E57!important;color:#fff;}
+    .legNll { background-color:#EAEAEA!important;color:#fff;}
+*/
+    .legStr { background-color:#90908F!important;color:#fff;}
+    .legArr { background-color:rgba(100,116,165,1)!important;color:#fff;}
+    .legObj { background-color:rgba(152,0,61,1)!important;color:#fff;}
+    .legNum { background-color:#AFA528!important;color:#fff;}
+    .legBoo { background-color:#1A8E57!important;color:#fff;}
+    .legNll { background-color:#EAEAEA!important;color:#fff;}
+    
     </style>    
   </div>
   <div>
@@ -109,5 +135,19 @@
   };
   var config = <%= @job.message%>;
    $('#editor').jsonEditor(config['args'][0], opt);
+   // Expend All
+   $('#expendAll').click(function() {
+     var item = $('#editor');
+     item.toggleClass('expanded');
+     var btn = $('#expendAll');
+     var exp = $('.expander');
+     if (btn.text() == "alle ausfahren") {
+       btn.text("alle einfahren");
+       exp.text("-");
+     } else {
+       btn.text("alle ausfahren");
+       exp.text("+");
+     }
+   });
   </script>
 </div>
