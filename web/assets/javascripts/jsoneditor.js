@@ -111,20 +111,26 @@
     
     function addExpander(item) {
         if (item.children('.expander').length == 0) {
-            var expander =   $('<span>',  { 'class': 'expander' });
+            var expander =   $('<span>',  { 'class': 'expander', 'text':'+'});
             expander.bind('click', function() {
                 var item = $(this).parent();
                 item.toggleClass('expanded');
+                var $self = $(this);
+                if ($self.text() == "+")
+                   $self.text("-");
+                else
+                    $self.text("+");
             });
             item.prepend(expander);
         }
     }
-
+    
+    
     function addListAppender(item, handler) {
         var appender = $('<div>', { 'class': 'item appender' }),
             btn      = $('<button></button>', { 'class': 'property' });
 
-        btn.text('new');
+        btn.text('+1');
 
         appender.append(btn);
         item.append(appender);
@@ -175,6 +181,7 @@
             root.append(item);
             
             property.val(key).attr('title', key);
+            
             var val = stringify(json[key]);
             value.val(val).attr('title', val);
 
@@ -264,14 +271,14 @@
     function assignType(item, val) {
         var className = 'null';
         
-        if (isObject(val)) className = 'object';
-        else if (isArray(val)) className = 'array';
-        else if (isBoolean(val)) className = 'boolean';
-        else if (isString(val)) className = 'string';
-        else if (isNumber(val)) className = 'number';
+        if (isObject(val)) className = 'object_sym';
+        else if (isArray(val)) className = 'array_sym';
+        else if (isBoolean(val)) className = 'boolean_sym';
+        else if (isString(val)) className = 'string_sym';
+        else if (isNumber(val)) className = 'number_sym';
 
         item.removeClass(types);
         item.addClass(className);
-    }
+    }    
 
 })( jQuery );

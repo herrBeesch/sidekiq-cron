@@ -8,6 +8,7 @@ module Sidekiq
         web_dir = File.expand_path("../../../../web", __FILE__)
         js_dir = File.join(web_dir, "assets", "javascripts")
         css_dir = File.join(web_dir, "assets", "stylesheets")
+        img_dir = File.join(web_dir, "assets", "images")
 
 
         app.register Sinatra::AssetPack
@@ -15,6 +16,7 @@ module Sidekiq
         app.assets {
           serve '/js', from: js_dir
           serve '/css', from: css_dir
+          serve '/images', from: img_dir
           js 'jsoneditor', ['/js/jsoneditor.js']
           css 'jsoneditor', ['/css/jsoneditor.css']
         }
