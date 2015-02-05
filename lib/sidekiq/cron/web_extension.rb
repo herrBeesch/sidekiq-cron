@@ -101,9 +101,10 @@ module Sidekiq
           end
           cronData = data['process_config']['cron']
           processName = data['process_config']['name']
+          klass = data['process_config']['klass']
           queue = data['process_config']['sidekiq_queue'].blank? ? "default" : data['process_config']['sidekiq_queue']
           begin
-            job = Sidekiq::Cron::Job.new( name: processName, cron: cronData, queue: queue, klass: 'GenericCronExportProcess', args: data)
+            job = Sidekiq::Cron::Job.new( name: processName, cron: cronData, queue: queue, klass: klass, args: data)
             if job.valid?
               job.save
               return 200, "{message: Job created.}"
