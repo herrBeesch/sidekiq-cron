@@ -4,9 +4,14 @@ $(function () {
     if ($( "#tagSearchInput" ) && $( "#tagSearchInput" ).val()){
       argsString = $( "#tagSearchInput" ).val().replace(/ /g, '.');
     }
-    var currentURL = window.location;
+    // var currentURL = window.location;
     // window.location.href = currentURL.protocol +  currentURL.host + '/sidekiq/cron/' + argsString;
-    window.location.pathname = '/sidekiq/cron/' + argsString;
+    if (argsString.length == 0){
+      window.location.pathname = '/sidekiq/cron';
+    }
+    else {
+      window.location.pathname = '/sidekiq/cron/' + argsString;
+    }
   };
   $( "#tagSearchSubmit" ).bind({ 
     click: function(){
