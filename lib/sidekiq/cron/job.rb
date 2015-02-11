@@ -140,6 +140,25 @@ module Sidekiq
         output
       end
 
+      def self.all_with_tags tags
+        out = []
+        # redis search for tags 
+        Sidekiq.redis do |conn|
+          if !tags.nil? and tags.is_a?(Array) and tags.size > 0
+            tagFilter = tags.collect{|t| "tag:#{t}"}
+            logger.info {tagFilter}
+            out = conn.sinter(tagFilter).collect do |key|
+              if conn.exists key
+                Job.new conn.hgetall(key)
+              else
+                nil
+              end
+            end
+          end
+        end
+        out.select{|j| !j.nil? }
+      end
+
       # create new instance of cron job
       def self.create hash
         new(hash).save
@@ -157,18 +176,17 @@ module Sidekiq
         end
       end
 
-      attr_accessor :name, :cron, :klass, :args, :message
+      attr_accessor :name, :cron, :klass, :tags, :args, :message
       attr_reader   :last_run_time
 
       def initialize input_args = {}
         args = input_args.stringify_keys
-
         @name = args["name"]
         @cron = args["cron"]
 
         #get class from klass or class
         @klass = args["klass"] || args["class"]
-
+        
         #set status of job
         @status = args['status'] || status_from_redis
 
@@ -208,7 +226,13 @@ module Sidekiq
           #dump message as json
           @message = message_data
         end
-
+        #set tags, dig in config to find them
+        if @args[0]['process_config']['tags']
+          @tags = @args[0]['process_config']['tags'].uniq
+        else
+          @tags = []
+        end
+        
       end
 
       def status 
@@ -223,6 +247,10 @@ module Sidekiq
       def enable!
         @status = "enabled"
         save
+      end
+
+      def tags
+        @tags
       end
 
       def status_from_redis
@@ -292,15 +320,26 @@ module Sidekiq
       def save
         #if job is invalid return false
         return false unless valid?
-
         Sidekiq.redis do |conn|
 
           #add to set of all jobs
           conn.sadd self.class.jobs_key, redis_key
+          # conn.sadd cron_jobs, betzold_test_import
+          
 
           #add informations for this job!
           conn.hmset redis_key, *hash_to_redis(to_hash)
+          
+          # conn.hmset betzold_test_import, name: betzold_test_import cron 00001 klass GenericImportProcess ...
 
+          # add tags for this job
+          if @tags
+            # delete existing tags
+              
+            for tg in @tags
+              conn.sadd "tag:#{tg}", redis_key
+            end
+          end
           #add information about last time! - don't enque right after scheduler poller starts!
           time = Time.now
           conn.zadd(job_enqueued_key, time.to_f.to_s, formated_last_time(time).to_s)
@@ -321,6 +360,12 @@ module Sidekiq
 
           #delete main job
           conn.del redis_key
+          
+          # remove from tags
+          tags = conn.keys "tag:*"
+          for tg in tags
+            conn.srem tg, redis_key
+          end
         end
         logger.info { "Cron Jobs - deleted job with name: #{@name}" }
       end

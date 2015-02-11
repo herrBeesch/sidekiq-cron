@@ -1,17 +1,28 @@
+<%= js :tagsearch%>
+<%= css :tagsearch%>
 <header class='row'>
   <div class='span5'>
     <h3><%=no_translation 'CronJobs' %></h3>
   </div>
 </header>
-<% if @cron_jobs.size > 0 %>
 
+
+<label for="tagSearch">Tag search</label>
+<div class="input-group">
+  <input type="text" class="form-control" id="tagSearchInput" placeholder="search for tags" value="<%= @tags.uniq.join(' ') if @tags%>">
+  <span class="input-group-btn">
+    <button class="btn btn-default" type="submit" id="tagSearchSubmit">Go!</button>
+  </span>
+</div>
+<br/>
+<% if @cron_jobs.size > 0 %>
   <table class="table table-hover table-bordered table-striped">
     <thead>
       <th><%= no_translation('Status') %></th>
       <th><%= no_translation('Name') %></th>
       <th><%= no_translation('Cron') %></th>
       <th><%= no_translation('Last enque') %></th>
-      <th><%= no_translation('Arguments') %></th>
+      <th><%= no_translation('Tags') %></th>
       <th width="253px"><%= no_translation('Actions')%></th>
     </thead>
 
@@ -23,38 +34,38 @@
           <td style="<%= style %>"><%= job.name %></td>
           <td style="<%= style %>"><b><%= job.cron.gsub(" ", "&nbsp;") %></b></td>
           <td style="<%= style %>"><%= relative_time(job.last_run_time) %></td>
-          <td style="<%= style %>">
-            <% if job.message and job.message.to_s.size > 100 %>
-              <button data-toggle="collapse" data-target=".worker_<%= index %>" class="btn btn-mini"><%= no_translation('ShowAll')%></button>
-              <div class="toggle worker_<%= index %>" style="display: inline;"><%= job.message[0..100] + "... " %></div>
-              <div class="toggle worker_<%= index %>" style="display: none;"><%= job.message %></div>
-            <% else %>
-              <%= job.message %>
+          <td style="<%= style %>">            
+            <% if job.tags and job.tags.is_a?(Array) %>
+              <div style="display: inline;">
+                <% for tag in job.tags.uniq %>
+                 <span class="label label-info search-tag" data-tag="<%=tag%>"><%= tag%></span>
+                <% end %>
+              </div>
             <% end %>
           </td>
           <td style="<%= style %>">
             <% if job.status == 'enabled' %>
               <form action="<%= root_path %>cron/<%= job.name %>/enque" method="post">
-                <input class='btn btn-mini pull-left' type="submit" name="enque" value="<%= no_translation('EnqueueNow') %>"/>
+                <input class='btn btn-xs pull-left' type="submit" name="enque" value="<%= no_translation('EnqueueNow') %>"/>
               </form>
               <form action="<%= root_path %>cron/<%= job.name %>/disable" method="post">
-                <input class='btn btn-mini pull-left' type="submit" name="disable" value="<%= no_translation('Disable') %>"/>
+                <input class='btn btn-xs pull-left' type="submit" name="disable" value="<%= no_translation('Disable') %>"/>
               </form>
               <form action="<%= root_path %>cron/<%= job.name %>/edit" method="get">
-                <input class='btn btn-mini pull-left' type="submit" name="edit" value="<%= no_translation('Edit') %>"/>
+                <input class='btn btn-xs pull-left' type="submit" name="edit" value="<%= no_translation('Edit') %>"/>
               </form>
             <% else %>
               <form action="<%= root_path %>cron/<%= job.name %>/enque" method="post">
-                <input class='btn btn-mini pull-left' type="submit" name="enque" value="<%= no_translation('EnqueueNow') %>"/>
+                <input class='btn btn-xs pull-left' type="submit" name="enque" value="<%= no_translation('EnqueueNow') %>"/>
               </form>
               <form action="<%= root_path %>cron/<%= job.name %>/enable" method="post">
-                <input class='btn btn-mini pull-left' type="submit" name="enable" value="<%= no_translation('Enable') %>"/>
+                <input class='btn btn-xs pull-left' type="submit" name="enable" value="<%= no_translation('Enable') %>"/>
               </form>
               <form action="<%= root_path %>cron/<%= job.name %>/edit" method="get">
-                <input class='btn btn-mini pull-left' type="submit" name="edit" value="<%= no_translation('Edit') %>"/>
+                <input class='btn btn-xs pull-left' type="submit" name="edit" value="<%= no_translation('Edit') %>"/>
               </form>
               <form action="<%= root_path %>cron/<%= job.name %>/delete" method="post">
-                <input class='btn btn-mini btn-danger pull-left' type="submit" name="delete" value="<%= no_translation('Delete') %>" data-confirm="<%= no_translation('AreYouSureDeleteCronJob', :job => job.name) %>"/>
+                <input class='btn btn-xs btn-danger pull-left' type="submit" name="delete" value="<%= no_translation('Delete') %>" data-confirm="<%= no_translation('AreYouSureDeleteCronJob', :job => job.name) %>"/>
               </form>
             <% end %>
           </td>

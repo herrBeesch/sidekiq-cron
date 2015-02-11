@@ -18,7 +18,9 @@ module Sidekiq
           serve '/css', from: css_dir
           serve '/images', from: img_dir
           js 'jsoneditor', ['/js/jsoneditor.js']
+          js 'tagsearch', ['/js/tagsearch.js']
           css 'jsoneditor', ['/css/jsoneditor.css']
+          css 'tagsearch', ['/css/tagsearch.css']
         }
         
         #very bad way of loading locales for cron jobs
@@ -31,10 +33,30 @@ module Sidekiq
         end    
         
         #index page of cron jobs
-        app.get '/cron' do   
+        app.get '/cron' do
           view_path    = File.join(File.expand_path("..", __FILE__), "views")          
           @cron_jobs = Sidekiq::Cron::Job.all
 
+          #if Slim renderer exists and sidekiq has layout.slim in views
+          if defined?(Slim) && File.exists?(File.join(settings.views,"layout.slim"))
+            render(:slim, File.read(File.join(view_path, "cron.slim")))
+          else
+            render(:erb, File.read(File.join(view_path, "cron.erb")))
+          end
+        end
+
+        app.get '/cron/:tagstring' do |tagstring|
+          view_path = File.join(File.expand_path("..", __FILE__), "views")
+          unless tagstring.blank?
+            if tagstring.include?('.')
+              @tags = tagstring.split('.')
+            else
+              @tags = [tagstring]
+            end
+            @cron_jobs = Sidekiq::Cron::Job.all_with_tags @tags
+          else
+            @cron_jobs = Sidekiq::Cron::Job.all
+          end
           #if Slim renderer exists and sidekiq has layout.slim in views
           if defined?(Slim) && File.exists?(File.join(settings.views,"layout.slim"))
             render(:slim, File.read(File.join(view_path, "cron.slim")))
@@ -107,19 +129,19 @@ module Sidekiq
             job = Sidekiq::Cron::Job.new( name: processName, cron: cronData, queue: queue, klass: klass, args: data)
             if job.valid?
               job.save
-              return 200, "{message: Job created.}"
+              return 200, "{message: Job updated.}"
             else
               return 400, "{error: {message: 'Could not create job: #{job.errors}'}}"
             end
           rescue Exception => e
             return 500, "{message: 'Something went wrong with #{e.class}: #{e}}'"
           end    
-          if @job = Sidekiq::Cron::Job.find(name)
-            view_path    = File.join(File.expand_path("..", __FILE__), "views")
-            render(:erb, File.read(File.join(view_path, "cron_edit.erb")))
-          else
-            redirect "#{root_path}cron"
-          end
+          # if @job = Sidekiq::Cron::Job.find(name)
+          #   view_path    = File.join(File.expand_path("..", __FILE__), "views")
+          #   render(:erb, File.read(File.join(view_path, "cron_edit.erb")))
+          # else
+          #   redirect "#{root_path}cron"
+          # end
         end
         
       end
